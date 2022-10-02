@@ -1,49 +1,94 @@
-import React from "react";
-import TableBody from "@mui/material/TableBody";
-import Table from "@mui/material/Table";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
+import {
+  Button,
+  Link,
+  Paper,
+  Stack,
+  SxProps,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Checkbox,
+} from "@mui/material";
+import { faker } from "@faker-js/faker";
 
-function createData(number, item, qty, price) {
-  return { number, item, qty, price };
+interface Order {
+  orderId: string;
+  creatonDate: Date;
+  createdBy: string;
+  orderType: string;
+  customerName: string;
 }
 
-const rows = [
-  createData(1, "Apple", 5, 3),
-  createData(2, "Orange", 2, 2),
-  createData(3, "Grapes", 3, 1),
-  createData(4, "Tomato", 2, 1.6),
-  createData(5, "Mango", 1.5, 4)
-];
+const orders: Array<Order> = [];
 
-export default function BasicTable() {
+for (let i = 0; i < 20; i++) {
+  orders.push({
+    orderId: faker.datatype.uuid(),
+    creatonDate: faker.date.recent(),
+    createdBy: faker.name.fullName(),
+    orderType: faker.finance.transactionType(),
+    customerName: faker.name.fullName()
+  });
+}
+
+const tableContainerSx: SxProps = {
+  width: "inherit",
+  marginLeft: 0,
+  marginRight: 0,
+  marginTop: 4,
+  borderRadius: 2,
+  maxHeight: 500
+};
+
+export default function TutorialTable() {
   return (
-    <TableContainer component={Paper}>
-      <Table aria-label="simple table">
-        <TableHead>
-          <TableRow>
-            <TableCell>S.No</TableCell>
-            <TableCell align="right">Item</TableCell>
-            <TableCell align="right">Quantity&nbsp;(kg)</TableCell>
-            <TableCell align="right">Price&nbsp;($)</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {rows.map((row) => (
-            <TableRow key={row.number}>
-              <TableCell component="th" scope="row">
-                {row.number}
-              </TableCell>
-              <TableCell align="right">{row.item}</TableCell>
-              <TableCell align="right">{row.qty}</TableCell>
-              <TableCell align="right">{row.price}</TableCell>
+    <>
+      <TableContainer
+        component={Paper}
+        sx={tableContainerSx}
+      >
+        <Table stickyHeader={true}>
+          <TableHead>
+            <TableRow>
+              <TableCell scope="header" color="primary"><Checkbox/></TableCell>
+              <TableCell scope="header">Order Id</TableCell>
+              <TableCell scope="header">Creation Date</TableCell>
+              <TableCell scope="header">Created by</TableCell>
+              <TableCell scope="header">Order Type</TableCell>
+              <TableCell scope="header">Customer Name</TableCell>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+          </TableHead>
+          <TableBody>
+            {orders.map((address) => (
+              <TableRow key={address.orderId}>
+              <TableCell scope="header"><Checkbox  color="primary"/></TableCell>
+                <TableCell scope="row">
+                  <Stack direction="column">
+                    <div>
+                    {address.orderId}
+                    </div>
+                  </Stack>
+                </TableCell>
+                <TableCell scope="row">
+                    <div>
+                    {address.creatonDate.getDate()}
+                    </div>
+                </TableCell>
+                <TableCell scope="row">{address.createdBy}</TableCell>
+                <TableCell scope="row">
+                  {address.orderType}
+                </TableCell>                
+                <TableCell scope="row">
+                    {address.customerName}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </>
   );
 }
