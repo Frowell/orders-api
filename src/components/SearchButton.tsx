@@ -6,7 +6,7 @@ import Stack from '@mui/material/Stack';
 export default function SearchButton() {
   return (
     <Stack direction="row" spacing={2}>
-      <Button variant="contained" startIcon={<SearchIcon/>}></Button>
+      <Button variant="contained" startIcon={<SearchIcon/>} sx={{mx:"auto"}}></Button>
     </Stack>
   );
 }

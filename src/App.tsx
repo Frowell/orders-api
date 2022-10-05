@@ -5,8 +5,10 @@ import DeleteButton from './components/DeleteButton';
 import CreateButton from './components/CreateButton';
 import OrderType from './components/OrderType';
 import Header from './components/Header';
+import cors from 'cors';
 
 import './App.css';
+
 
 function App() {
   return (

@@ -7,7 +7,7 @@ import Stack from '@mui/material/Stack';
 
 export default function SearchButton() {
   return (
-    <Stack direction="row" spacing={2}>
+    <Stack direction={{sm: 'column', md: 'row' }} spacing={2} sx={{mt: 10, mr:"auto"}}>
       <SearchBar></SearchBar>
       <CreateButton></CreateButton>
       <DeleteButton></DeleteButton>

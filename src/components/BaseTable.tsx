@@ -12,27 +12,43 @@ import {
   TableRow,
   Checkbox,
 } from "@mui/material";
+import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import { faker } from "@faker-js/faker";
+import OrderService from '../api/api.tsx';
+import Order from '../models/Order.tsx';
 
 interface Order {
-  orderId: string;
-  creatonDate: Date;
-  createdBy: string;
-  orderType: string;
+  id: string;
+  createdDate: Date;
+  createdByUsername: string;
+  type: string;
   customerName: string;
 }
 
-const orders: Array<Order> = [];
+let OrderType: string[] = ['Standard', 'Sale Order', 'Purchase Order', 'Transfer Order', 'Return Order'];
 
-for (let i = 0; i < 20; i++) {
-  orders.push({
-    orderId: faker.datatype.uuid(),
-    creatonDate: faker.date.recent(),
-    createdBy: faker.name.fullName(),
-    orderType: faker.finance.transactionType(),
-    customerName: faker.name.fullName()
-  });
-}
+
+var orders: Array<Order> = [];
+console.log("Something");
+var ordersList: Array<Order> = [];
+var deleteList: Array<Order> = [];
+OrderService.getAll()      
+      .then((response: any) => {
+        for (let i = 0; i < response.data.length; i++) {
+          console.log(response.data[i]);
+          orders.push({
+            id: response.data[i].id,
+            createdDate: new Date(response.data[i].createdDate),
+            createdByUsername: response.data[i].createdByUsername,
+            type: OrderType[response.data[i].type],
+            customerName: response.data[i].customerName
+          });
+        }
+      })
+      .catch((e: Error) => {
+        console.log(e);
+      });
+console.log("Next? " + ordersList);
 
 const tableContainerSx: SxProps = {
   width: "inherit",
@@ -40,55 +56,34 @@ const tableContainerSx: SxProps = {
   marginRight: 0,
   marginTop: 4,
   borderRadius: 2,
-  maxHeight: 500
+  maxHeight: 700
 };
 
-export default function TutorialTable() {
+export default function DataTable() {
   return (
-    <>
-      <TableContainer
-        component={Paper}
-        sx={tableContainerSx}
-      >
-        <Table stickyHeader={true}>
-          <TableHead>
-            <TableRow>
-              <TableCell scope="header" color="primary"><Checkbox/></TableCell>
-              <TableCell scope="header">Order Id</TableCell>
-              <TableCell scope="header">Creation Date</TableCell>
-              <TableCell scope="header">Created by</TableCell>
-              <TableCell scope="header">Order Type</TableCell>
-              <TableCell scope="header">Customer Name</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {orders.map((address) => (
-              <TableRow key={address.orderId}>
-              <TableCell scope="header"><Checkbox  color="primary"/></TableCell>
-                <TableCell scope="row">
-                  <Stack direction="column">
-                    <div>
-                    {address.orderId}
-                    </div>
-                  </Stack>
-                </TableCell>
-                <TableCell scope="row">
-                    <div>
-                    {address.creatonDate.getDate()}
-                    </div>
-                </TableCell>
-                <TableCell scope="row">{address.createdBy}</TableCell>
-                <TableCell scope="row">
-                  {address.orderType}
-                </TableCell>                
-                <TableCell scope="row">
-                    {address.customerName}
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </>
+    <div style={{ height: 800, width: '100%' }}>
+      <DataGrid
+        experimentalFeatures={{newEditingApi: true}}
+        rows={orders}
+        columns={[
+          { field: 'id', headerName: 'ID', width: 300 },
+          { field: 'createdDate', headerName: 'Created Date', width: 450 },
+          { field: 'createdByUsername', headerName: 'Created by' },
+          { field: 'type', headerName: 'Order Type', width: 150 },
+          { field: 'customerName', headerName: 'Customer Name', width: 150, editable: true}
+            ]}
+        pageSize={15}
+        rowsPerPageOptions={[5]}
+        checkboxSelection
+        onSelectionModelChange={(ids) => {
+          const selectedIDs = new Set(ids);
+          const selectedRowData = orders.filter((row) =>
+            selectedIDs.has(row.id.toString())
+          );
+          console.log(selectedRowData);
+        }}
+
+      />
+    </div>
   );
 }
