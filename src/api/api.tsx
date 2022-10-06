@@ -10,7 +10,7 @@ const get = (id: any) => {
 };
 
 const create = (data: Order) => {
-  return http.post<Order>("/Orders", data);
+  return http.post<any>("/Orders", data);
 };
 
 const update = (id: any, data: Order) => {

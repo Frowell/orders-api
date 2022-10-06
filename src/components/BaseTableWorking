@@ -49,7 +49,7 @@ OrderService.getAll()
 console.log("Next? " + ordersList);
 
 
-/*for (let i = 0; i < ordersList.length; i++) {
+for (let i = 0; i < ordersList.length; i++) {
   console.log(ordersList[i]);
   orders.push({
     id: ordersList[i].id,
@@ -58,7 +58,7 @@ console.log("Next? " + ordersList);
     type: ordersList[i].type,
     customerName: ordersList[i].customerName
   });
-}*/
+}
 
 const tableContainerSx: SxProps = {
   width: "inherit",
@@ -80,7 +80,10 @@ export default function OrderTable() {
         <Table stickyHeader={true}>
           <TableHead>
             <TableRow>
-              <TableCell scope="header" ><Checkbox color="error"/></TableCell>
+              <TableCell scope="header" ><Checkbox color="error"
+            indeterminate={numSelected > 0 && numSelected < rowCount}
+            checked={rowCount > 0 && numSelected === rowCount}
+            onChange={onSelectAllClick}/></TableCell>
               <TableCell scope="header">Order Id</TableCell>
               <TableCell scope="header">Creation Date</TableCell>
               <TableCell scope="header">Created by</TableCell>

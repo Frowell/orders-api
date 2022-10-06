@@ -1,0 +1,160 @@
+import {
+  Button,
+  Link,
+  Paper,
+  Stack,
+  SxProps,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Checkbox,
+} from "@mui/material";
+import { faker } from "@faker-js/faker";
+import OrderService from '../api/api.tsx';
+import Order from '../models/Order.tsx';
+import Reac, { useState, useEffect } from "react";
+
+interface Order {
+  id: string;
+  createdDate: Date;
+  createdByUsername: string;
+  type: string;
+  customerName: string;
+}
+
+let ignore:boolean = false;
+
+const BaseTable = () => {
+
+    let OrderType: string[] = ['Standard', 'Sale Order', 'Purchase Order', 'Transfer Order', 'Return Order'];
+
+
+    const [orders, setOrder] = useState([]);
+    console.log("Something");
+    var ordersList: Array<Order> = [];
+    useEffect(() => {
+        if(!ignore) {
+            OrderService.getAll()      
+              .then((response: any) => {
+                for (let i = 0; i < response.data.length; i++) {
+                  console.log(response.data[i]);
+                  setOrder(orders => [...orders, {
+                    id: response.data[i].id,
+                    createdDate: new Date(response.data[i].createdDate),
+                    createdByUsername: response.data[i].createdByUsername,
+                    type: OrderType[response.data[i].type],
+                    customerName: response.data[i].customerName
+                  }]);
+                }
+              })
+              .catch((e: Error) => {
+                console.log(e);
+              });
+              ignore = true;
+        }
+    })
+    console.log("Next? " + ordersList);
+
+    const handleRowUpdate = (newData, oldData, resolve) => {
+    //validating the data inputs
+    let errorList = []
+    newData.id = crypto.randomUUID();
+    newData.createdDate = new Date();
+    newData.createdByUsername = "frowell";
+    if (newData.type == "") {
+      errorList.push("Try Again, Order Type field can't be blank");
+    }
+    if (newData.customerName == "") {
+      errorList.push("Try Again, Customer Name can't be blank");
+    }
+
+    if (errorList.length < 1) {
+      OrderService.create(newData)
+        .then(response => {
+          const updateUser = [...user];
+          const index = oldData.tableData.id;
+          updateUser[index] = newData;
+          setUser([...updateUser]);
+          resolve()
+          setIserror(false)
+          setErrorMessages([])
+        })
+        .catch(error => {
+          setErrorMessages(["Update failed! Server error"])
+          setIserror(true)
+          resolve()
+
+        })
+    } else {
+      setErrorMessages(errorList)
+      setIserror(true)
+      resolve()
+
+    }
+  }
+
+
+
+    const tableContainerSx: SxProps = {
+      width: "inherit",
+      marginLeft: 0,
+      marginRight: 0,
+      marginTop: 4,
+      borderRadius: 2,
+      maxHeight: 700
+    };
+
+  return (
+    <>
+      <TableContainer
+        component={Paper}
+        sx={tableContainerSx}
+        class="container"
+      >
+        <Table stickyHeader={true}>
+          <TableHead>
+            <TableRow>
+              <TableCell scope="header" ><Checkbox color="error"/></TableCell>
+              <TableCell scope="header">Order Id</TableCell>
+              <TableCell scope="header">Creation Date</TableCell>
+              <TableCell scope="header">Created by</TableCell>
+              <TableCell scope="header">Order Type</TableCell>
+              <TableCell scope="header">Customer Name</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {orders.map((order) => (
+              <TableRow key={order.id}>
+              <TableCell scope="header"><Checkbox color="error"/></TableCell>
+                <TableCell scope="row">
+                  <Stack direction="column">
+                    <div>
+                    {order.id}
+                    </div>
+                  </Stack>
+                </TableCell>
+                <TableCell scope="row">
+                    <div>
+                    {order.createdDate.toString()}
+                    </div>
+                </TableCell>
+                <TableCell scope="row">{order.createdByUsername}</TableCell>
+                <TableCell scope="row">
+                  {order.type}
+                </TableCell>                
+                <TableCell scope="row">
+                    {order.customerName}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </>
+  );
+}
+
+export default BaseTable;
