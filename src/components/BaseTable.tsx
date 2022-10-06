@@ -14,8 +14,10 @@ import {
 } from "@mui/material";
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import { faker } from "@faker-js/faker";
+import ButtonBar from './ButtonBar';
 import OrderService from '../api/api.tsx';
 import Order from '../models/Order.tsx';
+import Reac, { useState, useEffect } from "react";
 
 interface Order {
   id: string;
@@ -27,27 +29,12 @@ interface Order {
 
 let OrderType: string[] = ['Standard', 'Sale Order', 'Purchase Order', 'Transfer Order', 'Return Order'];
 
+let ignore:boolean = false;
 
-var orders: Array<Order> = [];
 console.log("Something");
 var ordersList: Array<Order> = [];
 var deleteList: Array<Order> = [];
-OrderService.getAll()      
-      .then((response: any) => {
-        for (let i = 0; i < response.data.length; i++) {
-          console.log(response.data[i]);
-          orders.push({
-            id: response.data[i].id,
-            createdDate: new Date(response.data[i].createdDate),
-            createdByUsername: response.data[i].createdByUsername,
-            type: OrderType[response.data[i].type],
-            customerName: response.data[i].customerName
-          });
-        }
-      })
-      .catch((e: Error) => {
-        console.log(e);
-      });
+
 console.log("Next? " + ordersList);
 
 const tableContainerSx: SxProps = {
@@ -59,8 +46,34 @@ const tableContainerSx: SxProps = {
   maxHeight: 700
 };
 
+
 export default function DataTable() {
+    const [orders, setDataGridRows] = useState([]);
+    useEffect(() => {
+        if(!ignore) {
+            OrderService.getAll()      
+              .then((response: any) => {
+                for (let i = 0; i < response.data.length; i++) {
+                  console.log(response.data[i]);
+                  setDataGridRows(orders => [...orders, {
+                    id: response.data[i].id,
+                    createdDate: new Date(response.data[i].createdDate),
+                    createdByUsername: response.data[i].createdByUsername,
+                    type: OrderType[response.data[i].type],
+                    customerName: response.data[i].customerName
+                  }]);
+                }
+              })
+              .catch((e: Error) => {
+                console.log(e);
+              });
+              ignore = true;
+        }
+    })
+
   return (
+    <div style={{width: '100%'}}>
+    <ButtonBar></ButtonBar>
     <div style={{ height: 800, width: '100%' }}>
       <DataGrid
         experimentalFeatures={{newEditingApi: true}}
@@ -84,6 +97,7 @@ export default function DataTable() {
         }}
 
       />
+    </div>
     </div>
   );
 }

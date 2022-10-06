@@ -5,7 +5,7 @@ import SearchField from './SearchField';
 
 export default function SearchBar() {
   return (
-    <Stack direction="row" spacing={2} sx={{mx:"auto"}}>
+    <Stack direction="row" spacing={2}>
       <SearchField></SearchField>
       <SearchButton></SearchButton>
 

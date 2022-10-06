@@ -1,21 +1,19 @@
 import React from 'react';
 import BaseTable from './components/BaseTable';
-import ButtonBar from './components/ButtonBar';
-import DeleteButton from './components/DeleteButton';
-import CreateButton from './components/CreateButton';
-import OrderType from './components/OrderType';
 import Header from './components/Header';
+import { createStore } from 'redux';
+import rootReducer from './reducers';
 import cors from 'cors';
 
 import './App.css';
 
+const store = createStore(rootReducer);
 
 function App() {
   return (
     <div className="App">
       <header className="App-header">
         <Header></Header>
-        <ButtonBar></ButtonBar>
         <BaseTable></BaseTable>
       </header>
     </div>

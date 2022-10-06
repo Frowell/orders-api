@@ -6,10 +6,10 @@ import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 
 export default function BasicSelect() {
-  const [orderType, setAge] = React.useState('');
+  const [orderType, setOrder] = React.useState('');
 
   const handleChange = (event: SelectChangeEvent) => {
-    setAge(event.target.value as string);
+    setOrder(event.target.value as string);
   };
 
   return (
